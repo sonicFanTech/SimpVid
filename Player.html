@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Video Player</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+            background-color: #121212;
+            color: #ffffff;
+        }
+        video {
+            width: 80%;
+            max-width: 800px;
+            margin-top: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+        }
+        .settings {
+            margin-top: 20px;
+            padding: 15px;
+            background: #1e1e1e;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+            display: inline-block;
+        }
+        select, input, button {
+            margin: 5px;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background: #333;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #555;
+        }
+        input[type="range"] {
+            width: 150px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Advanced Video Player</h1>
+    <input type="file" id="fileInput" accept="video/*">
+    <br>
+    <video id="videoPlayer" controls>
+        Your browser does not support the video tag.
+    </video>
+    
+    <div class="settings">
+        <h2>Settings</h2>
+        <label for="playbackSpeed">Playback Speed:</label>
+        <select id="playbackSpeed">
+            <option value="0.5">0.5x</option>
+            <option value="1" selected>1x (Normal)</option>
+            <option value="1.5">1.5x</option>
+            <option value="2">2x</option>
+        </select>
+        <br>
+        <label for="volumeControl">Volume:</label>
+        <input type="range" id="volumeControl" min="0" max="1" step="0.1" value="1">
+        <button id="muteButton">Mute</button>
+        <br>
+        <label for="loopToggle">Loop:</label>
+        <input type="checkbox" id="loopToggle">
+        <br>
+        <button id="fullScreenButton">Full Screen</button>
+        <br>
+        <label for="brightnessControl">Brightness:</label>
+        <input type="range" id="brightnessControl" min="0.5" max="2" step="0.1" value="1">
+        <br>
+        <label for="contrastControl">Contrast:</label>
+        <input type="range" id="contrastControl" min="0.5" max="2" step="0.1" value="1">
+    </div>
+
+    <script>
+        const videoPlayer = document.getElementById('videoPlayer');
+        document.getElementById('fileInput').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const videoURL = URL.createObjectURL(file);
+                videoPlayer.src = videoURL;
+                videoPlayer.load();
+                videoPlayer.play();
+            }
+        });
+
+        document.getElementById('playbackSpeed').addEventListener('change', function(event) {
+            videoPlayer.playbackRate = parseFloat(event.target.value);
+        });
+
+        document.getElementById('volumeControl').addEventListener('input', function(event) {
+            videoPlayer.volume = parseFloat(event.target.value);
+        });
+
+        document.getElementById('muteButton').addEventListener('click', function() {
+            videoPlayer.muted = !videoPlayer.muted;
+            this.textContent = videoPlayer.muted ? 'Unmute' : 'Mute';
+        });
+
+        document.getElementById('loopToggle').addEventListener('change', function(event) {
+            videoPlayer.loop = event.target.checked;
+        });
+
+        document.getElementById('fullScreenButton').addEventListener('click', function() {
+            if (videoPlayer.requestFullscreen) {
+                videoPlayer.requestFullscreen();
+            } else if (videoPlayer.mozRequestFullScreen) { 
+                videoPlayer.mozRequestFullScreen();
+            } else if (videoPlayer.webkitRequestFullscreen) { 
+                videoPlayer.webkitRequestFullscreen();
+            } else if (videoPlayer.msRequestFullscreen) { 
+                videoPlayer.msRequestFullscreen();
+            }
+        });
+
+        document.getElementById('brightnessControl').addEventListener('input', function(event) {
+            videoPlayer.style.filter = `brightness(${event.target.value}) contrast(${document.getElementById('contrastControl').value})`;
+        });
+
+        document.getElementById('contrastControl').addEventListener('input', function(event) {
+            videoPlayer.style.filter = `brightness(${document.getElementById('brightnessControl').value}) contrast(${event.target.value})`;
+        });
+    </script>
+</body>
+</html>
